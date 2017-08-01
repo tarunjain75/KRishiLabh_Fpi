@@ -1,6 +1,7 @@
 package example.com.klfpi;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonElement;
 
+import java.security.PublicKey;
 import java.util.Map;
 
 import ai.api.AIDataService;
@@ -53,22 +55,30 @@ public class MainActivity extends Activity implements View.OnClickListener{
         store_name=(TextView)findViewById(R.id.store_name);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor editor2 = settings.edit();
+
+
+
+
         DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference();
         myRef2.child("FPI").orderByChild("username").equalTo(settings.getString("Email",null)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("hello1");
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
                     String company=childSnapshot.getKey();
                     System.out.println("check"+" "+company);
                     if(settings.getString("company",null)!=null){
                         editor2.remove("company").apply();
                         editor2.putString("company",company).apply();
+
                     }
                     else{
                         editor2.putString("company",company).apply();
                     }
 
                     editor2.commit();
+                    /*DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                    myRef.child("Notification").child(settings.getString("company",null)).setValue("true");*/
                     store_name.setText(settings.getString("company",null));
                     System.out.println("check 1"+" "+settings.getString("company",null));
 
@@ -83,6 +93,25 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         });
 
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Notification");
+        ValueEventListener postlistener2=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("check 2"+" "+settings.getString("company",null));
+                if (!dataSnapshot.hasChild(settings.getString("company",null))) {
+                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                    myRef.child("Notification").child(settings.getString("company",null)).setValue("true");
+
+                    // run some code
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        rootRef.addValueEventListener(postlistener2);
 
         final AIConfiguration config = new AIConfiguration("257cd8e17d844690ac5e271733f24c1c",
                 AIConfiguration.SupportedLanguages.English,   //for voice and both for text
@@ -373,6 +402,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void PurchaseHistory(View view){
         Toast.makeText(getApplicationContext(), "purchase history section selected!",
                 Toast.LENGTH_SHORT).show();
+    }
+    public void Notification_Panel(View view){
+        Intent intentNew=new Intent(getApplicationContext(), NotificationPanel.class);
+        startActivity(intentNew);
     }
 
 

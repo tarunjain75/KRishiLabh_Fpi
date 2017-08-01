@@ -273,7 +273,7 @@
                             <android.support.v7.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="150dp"
-                                android:id="@+id/fpi_nearby"
+                                android:id="@+id/NotifyPanel"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="6dp"
                                 android:layout_marginRight="6dp"
@@ -282,7 +282,7 @@
                                 android:elevation="10dp"
                                 card_view:cardCornerRadius="4dp"
                                 card_view:contentPadding="5dp"
-                                android:onClick="FPInearby"
+                                android:onClick="Notification_Panel"
 
                                 >
                                 <LinearLayout
@@ -304,11 +304,12 @@
                                         android:layout_weight="1"
                                         android:gravity="center"
                                         android:layout_gravity="center"
-                                        android:text="@string/fpiNearby"
+                                        android:text="Notification Panel"
                                         android:textStyle="bold"
                                         android:background="#afb42b"
                                         android:textColor="@android:color/white"
                                         android:textSize="17dp"
+
                                         />
 
 
