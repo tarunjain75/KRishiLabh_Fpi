@@ -47,6 +47,7 @@ public class NotificationPanel extends Activity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("hello");// Get Post object and use the values to update the UI
 
+                try{
                 HashMap<String,Object> name = new HashMap<String, Object>();
                 name = (HashMap<String, Object>)dataSnapshot.getValue();
                 for ( Map.Entry<String, Object> entry : name.entrySet()) {
@@ -71,6 +72,10 @@ public class NotificationPanel extends Activity {
                 }
                 for(int j=0;j<Firm.size();j++){
                     dataNotifyInfo.add(new DataNotifyInfo(Firm.get(j),Status.get(j)));
+                }
+                }
+                catch (ClassCastException classCastException){
+                    Log.e("Exception",classCastException.toString());
                 }
             }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +42,11 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.InfoCompany.setText(dataNotifyInfos.get(position).getFirmName());
-        holder.Pay.setOnClickListener(new View.OnClickListener() {
+        Log.e("state",dataNotifyInfos.get(position).getStatus());
+        if(dataNotifyInfos.get(position).getStatus().equals("pending")){
+            Log.e("check status",dataNotifyInfos.get(position).getStatus());
+            holder.InfoCompany.setText(dataNotifyInfos.get(position).getFirmName());
+            holder.Pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -56,6 +60,13 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
 
             }
         });
+        }
+        else {
+            Log.e("check status 1",dataNotifyInfos.get(position).getStatus());
+            holder.paymentTabLayout.setVisibility(View.GONE);
+            holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
+            holder.InfoLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

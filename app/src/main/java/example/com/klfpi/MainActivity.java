@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
 
         DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference();
-        myRef2.child("FPI").orderByChild("username").equalTo(settings.getString("Email",null)).addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef2.child("FPI").orderByChild("username").equalTo(settings.getString("Email",null)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("hello1");
@@ -81,6 +81,27 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     myRef.child("Notification").child(settings.getString("company",null)).setValue("true");*/
                     store_name.setText(settings.getString("company",null));
                     System.out.println("check 1"+" "+settings.getString("company",null));
+                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Notification");
+                    ValueEventListener postlistener2=new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            System.out.println("check 2"+" "+settings.getString("company",null));
+                            if (!dataSnapshot.hasChild(settings.getString("company",null))) {
+                                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                                myRef.child("Notification").child(settings.getString("company",null)).setValue("true");
+
+                                // run some code
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                    rootRef.addValueEventListener(postlistener2);
+
+
 
                 }
             }
@@ -93,25 +114,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         });
 
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Notification");
-        ValueEventListener postlistener2=new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("check 2"+" "+settings.getString("company",null));
-                if (!dataSnapshot.hasChild(settings.getString("company",null))) {
-                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
-                    myRef.child("Notification").child(settings.getString("company",null)).setValue("true");
-
-                    // run some code
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        rootRef.addValueEventListener(postlistener2);
 
         final AIConfiguration config = new AIConfiguration("257cd8e17d844690ac5e271733f24c1c",
                 AIConfiguration.SupportedLanguages.English,   //for voice and both for text
