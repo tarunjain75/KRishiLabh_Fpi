@@ -16,6 +16,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +47,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
     TextView store_name,home_option,profile_option,settings_option,changeLanguage_option,share_option,rate_option,logOut_option;
     FrameLayout framelay;
     View menu_view;
-    String latitude="75.0";
-    String longitude="25.0";
+    ImageView imageView;
+    ProgressBar progressBar;
+    Double latitude=new Double(0);
+    String lat,firm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +60,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor editor2 = settings.edit();
 
+        progressBar=(ProgressBar)findViewById(R.id.login_progress);
+        imageView=(ImageView)findViewById(R.id.main_loading_layout);
 
 
 
@@ -80,6 +86,42 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     /*DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
                     myRef.child("Notification").child(settings.getString("company",null)).setValue("true");*/
                     store_name.setText(settings.getString("company",null));
+                    firm=settings.getString("company",null);
+                    DatabaseReference ref2=FirebaseDatabase.getInstance().getReference("FPI");
+                    DatabaseReference ref3=ref2.child(firm).child("latitude");
+                    Log.e("reference",ref3.getKey());
+                    ValueEventListener postlistnerRef3= new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            System.out.println("Hello"+" "+settings.getString("company",null)+" "+settings.getString("latitude",null));
+
+                            //String lat=String.valueOf(dataSnapshot.getValue(Long.class));
+
+                            latitude=dataSnapshot.getValue(Double.class);
+                            lat=String.valueOf(latitude);
+
+                            if(settings.getString("latitude",null)!=null){
+                                editor2.remove("latitude").apply();
+                                editor2.putString("latitude",lat).apply();
+                                System.out.println("MainActivity"+" "+"Latitude"+" "+settings.getString("latitude",null));
+                            }
+                            else{
+                                editor2.putString("latitude",lat).apply();
+                                System.out.println("MainActivity"+" "+"Latitude"+settings.getString("latitude",null));
+                            }
+
+                            editor2.commit();
+                        }
+
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    };
+                    ref3.addListenerForSingleValueEvent(postlistnerRef3);
+                    progressBar.setVisibility(View.GONE);
+                    imageView.setVisibility(View.GONE);
                     System.out.println("check 1"+" "+settings.getString("company",null));
                     DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Notification");
                     ValueEventListener postlistener2=new ValueEventListener() {

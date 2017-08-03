@@ -28,4 +28,8 @@ public class DataNotifyInfo {
         FirmName = firmName;
         Status = status;
     }
+    @Override
+    public String toString() {
+        return String.format(FirmName);
+    }
 }

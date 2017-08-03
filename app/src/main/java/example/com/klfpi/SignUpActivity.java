@@ -211,7 +211,19 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(mEmailView.getText().length()==0) {
+                    mEmailView.setError("Email cannot be left blank.");
+                }else if(mPasswordView.getText().length()==0){
+                    mPasswordView.setError("Password cannot be left blank.");
+                }else if (phone.getText().length()==0){
+                    phone.setError("Phone Number cannot be left blank.");
+                }else if(Licence.getText().length()==0){
+                    Licence.setError("Licence number cannot be left blank.");
+                } else if (company.getText().length()==0){
+                    company.setError("Company Name cannot be left blank.");
+                }
+                else{
+                    attemptLogin();}
 
             }
         });

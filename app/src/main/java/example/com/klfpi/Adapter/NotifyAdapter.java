@@ -43,30 +43,33 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Log.e("state",dataNotifyInfos.get(position).getStatus());
+        Log.e("position",Integer.toString(position));
+
+
         if(dataNotifyInfos.get(position).getStatus().equals("pending")){
             Log.e("check status",dataNotifyInfos.get(position).getStatus());
             holder.InfoCompany.setText(dataNotifyInfos.get(position).getFirmName());
+            holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
             holder.Pay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                @Override
+                public void onClick(View v) {
 
-                holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
-                final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-                DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null)).child(dataNotifyInfos.get(position).getFirmName());
-                reference.child("status").setValue("Approved");
-                holder.paymentTabLayout.setVisibility(View.GONE);
-                holder.InfoLayout.setVisibility(View.VISIBLE);
-                Toast.makeText(context,"Status Approved",Toast.LENGTH_SHORT).show();
+                    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+                    DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null)).child(dataNotifyInfos.get(position).getFirmName());
+                    reference.child("status").setValue("Approved");
+                    holder.InfoLayout.setVisibility(View.VISIBLE);
+                    Toast.makeText(context,"Status Approved",Toast.LENGTH_SHORT).show();
 
-            }
-        });
+                }
+            });
+
         }
+
         else {
             Log.e("check status 1",dataNotifyInfos.get(position).getStatus());
-            holder.paymentTabLayout.setVisibility(View.GONE);
-            holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
             holder.InfoLayout.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override

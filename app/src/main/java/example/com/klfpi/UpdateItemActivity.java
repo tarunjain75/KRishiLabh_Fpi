@@ -21,21 +21,14 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class UpdateItemActivity extends Activity {
-    EditText nameItem,availbaleQuant,itemRate;
+    EditText nameItem,availbaleQuant,itemRate,unit;
     TextView update,gotoDash;
     String company;
-    TextView unit;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_demand);
-//        String SPINNERLIST[]={"grams","kg","pc","lt"};
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_dropdown_item_1line, SPINNERLIST);
-//        MaterialBetterSpinner materialDesignSpinner = (MaterialBetterSpinner)
-//                findViewById(R.id.android_material_design_spinner);
-//        materialDesignSpinner.setAdapter(arrayAdapter);
-
         initView();
     }
 
@@ -44,12 +37,14 @@ public class UpdateItemActivity extends Activity {
         availbaleQuant = (EditText) findViewById(R.id.input_ItemQuantity);
         itemRate = (EditText) findViewById(R.id.input_ItemRate);
         update = (TextView) findViewById(R.id.input_update);
-        gotoDash = (TextView) findViewById(R.id.GotoDash);
-        unit = (TextView) findViewById(R.id.text);
-//        Spinner sp=(Spinner)findViewById(R.id.android_material_design_spinner);
+        unit = (EditText) findViewById(R.id.input_unit);
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         company = settings.getString("company", "");
-
+        final Bundle bundle = getIntent().getExtras();
+        if(bundle!=null){
+            nameItem.setText(bundle.getString("product_Name"));
+        }
 
         update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,9 +55,10 @@ public class UpdateItemActivity extends Activity {
                     DatabaseReference myRef2 = FirebaseDatabase.getInstance().getReference();
                     Product user2 = new Product(nameItem.getText().toString(), availbaleQuant.getText().toString(), itemRate.getText().toString(), unit.getText().toString());
                     myRef2.child("FPI_Product_list").child(company).child(nameItem.getText().toString()).setValue(user2);
+                    if(bundle!=null){
+                        onBackPressed();
+                    }
                     Toast.makeText(UpdateItemActivity.this,"Item Updated Succesfully",Toast.LENGTH_LONG).show();
-                    /*Intent in = new Intent(UpdateItemActivity.this, MainActivity.class);
-                    startActivity(in);*/
 
                 } catch (DatabaseException r) {
                     System.out.println(r);

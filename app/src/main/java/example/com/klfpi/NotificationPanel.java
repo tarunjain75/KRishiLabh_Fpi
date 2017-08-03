@@ -73,6 +73,7 @@ public class NotificationPanel extends Activity {
                 for(int j=0;j<Firm.size();j++){
                     dataNotifyInfo.add(new DataNotifyInfo(Firm.get(j),Status.get(j)));
                 }
+                Log.e("datanotify",dataNotifyInfo.toString());
                 }
                 catch (ClassCastException classCastException){
                     Log.e("Exception",classCastException.toString());
