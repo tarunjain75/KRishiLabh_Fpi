@@ -9,7 +9,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.fujiyuu75.sequent.Sequent;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,10 +39,20 @@ public class NotificationPanel extends Activity {
     ArrayList<String>Firm=new ArrayList<>();
     ArrayList<String>Status=new ArrayList<>();
     ArrayList<DataNotifyInfo> dataNotifyInfo=new ArrayList<>();
+    ImageView backArrow;
+    LinearLayout linearLayout;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_panel);
+        backArrow=(ImageView)findViewById(R.id.fpi_back_arrow);
+        linearLayout=(LinearLayout)findViewById(R.id.LinearView);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         final SharedPreferences settings= PreferenceManager.getDefaultSharedPreferences(this);
         Log.e("Name",settings.getString("company",null));
         DatabaseReference Myref= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null));
@@ -78,6 +92,13 @@ public class NotificationPanel extends Activity {
                 catch (ClassCastException classCastException){
                     Log.e("Exception",classCastException.toString());
                 }
+                recyclerView = (RecyclerView) findViewById(R.id.notification_recyclerView);
+
+                layoutManager = new LinearLayoutManager(getApplication(), LinearLayoutManager.VERTICAL, false);
+                recyclerView.setLayoutManager(layoutManager);
+                adapter = new NotifyAdapter(dataNotifyInfo, getApplicationContext());
+                recyclerView.setAdapter(adapter);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
             }
 
             @Override
@@ -89,11 +110,6 @@ public class NotificationPanel extends Activity {
 
 
 
-        recyclerView = (RecyclerView) findViewById(R.id.notification_recyclerView);
-        layoutManager = new LinearLayoutManager(getApplication(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new NotifyAdapter(dataNotifyInfo, getApplicationContext());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
     }
 }

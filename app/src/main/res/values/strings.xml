@@ -48,6 +48,6 @@
     <string name="RateOfItem">Rate of Item</string>
     <string name="signUp">Sign Up</string>
     <string name="password">Password</string>
-
+    <string name="connecting_to_server">Loading</string>
 
 </resources>

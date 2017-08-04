@@ -450,6 +450,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void Notification_Panel(View view){
         Intent intentNew=new Intent(getApplicationContext(), NotificationPanel.class);
         startActivity(intentNew);
+
     }
 
 

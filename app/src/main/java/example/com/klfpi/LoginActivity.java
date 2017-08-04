@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 /**
  * Created by User on 6/30/2017.
@@ -136,8 +137,11 @@ public class LoginActivity extends Activity {
     private void attemptLogin() {
 
 
-        cardView.setVisibility(View.VISIBLE);
-        spinner.setVisibility(View.VISIBLE);
+        new LovelyProgressDialog(this)
+                .setIcon(R.drawable.ic_cast_connected_white_36dp)
+                .setTitle(R.string.connecting_to_server)
+                .setTopColorRes(R.color.teal)
+                .show();
 //        if (mAuthTask != null) {
 //            return;
 //        }

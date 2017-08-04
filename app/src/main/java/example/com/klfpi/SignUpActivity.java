@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -285,7 +286,11 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
 
 
 
-        spinner.setVisibility(View.VISIBLE);
+        new LovelyProgressDialog(this)
+                .setIcon(R.drawable.ic_cast_connected_white_36dp)
+                .setTitle(R.string.connecting_to_server)
+                .setTopColorRes(R.color.teal)
+                .show();
 //        if (mAuthTask != null) {
 //            return;
 //        }

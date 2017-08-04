@@ -24,7 +24,7 @@ import example.com.klfpi.R;
  * Created by User on 7/30/2017.
  */
 
-public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder> {
+public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder> implements View.OnClickListener {
     ArrayList<DataNotifyInfo> dataNotifyInfos=new ArrayList<>();
     Context context;
 
@@ -44,24 +44,10 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Log.e("state",dataNotifyInfos.get(position).getStatus());
         Log.e("position",Integer.toString(position));
-
-
+        holder.InfoCompany.setText(dataNotifyInfos.get(position).getFirmName());
+        holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
         if(dataNotifyInfos.get(position).getStatus().equals("pending")){
             Log.e("check status",dataNotifyInfos.get(position).getStatus());
-            holder.InfoCompany.setText(dataNotifyInfos.get(position).getFirmName());
-            holder.CompanyApproved.setText(dataNotifyInfos.get(position).getFirmName());
-            holder.Pay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-                    DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null)).child(dataNotifyInfos.get(position).getFirmName());
-                    reference.child("status").setValue("Approved");
-                    holder.InfoLayout.setVisibility(View.VISIBLE);
-                    Toast.makeText(context,"Status Approved",Toast.LENGTH_SHORT).show();
-
-                }
-            });
 
         }
 
@@ -77,6 +63,8 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
         return dataNotifyInfos.size();
     }
 
+
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView Pay,InfoCompany,CompanyApproved;
         LinearLayout paymentTabLayout,InfoLayout;
@@ -87,6 +75,19 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
             CompanyApproved=(TextView)itemView.findViewById(R.id.company_NAME);
             paymentTabLayout=(LinearLayout) itemView.findViewById(R.id.paymentTabLayout);
             InfoLayout=(LinearLayout) itemView.findViewById(R.id.InfoLayout);
+            Pay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+                    DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null)).child(dataNotifyInfos.get(getAdapterPosition()).getFirmName());
+                    reference.child("status").setValue("Approved");
+                    InfoLayout.setVisibility(View.VISIBLE);
+                }
+            });
         }
+    }
+    @Override
+    public void onClick(View v) {
+
     }
 }
