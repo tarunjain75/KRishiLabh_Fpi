@@ -60,6 +60,7 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
     ImageView imageView;
     private FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseUser user;
+    LovelyProgressDialog lovelyProgressDialog;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -95,49 +96,7 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        // Register a listener to receive callbacks when a place has been selected or an error has
-        // occurred.
-//        DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference();
-//        System.out.println("check");
-//       // System.out.print(myRef2.toString());
-//        ValueEventListener postListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // Get Post object and use the values to update the UI
-//                Map<String, Object> newPost = (Map<String, Object>) dataSnapshot.getValue();
-//
-//               String []key=new String [newPost.size()];
-//                Object ob= newPost.get("FPI");
-//                HashMap<String,Object>m=(HashMap<String, Object>) ob;
-//                int i=0;
-//                for(String k:m.keySet())
-//                {
-//                    key[i]=k;
-//                    Object USER=m.get(key[i]);
-//                    HashMap<String,Object>test=(HashMap<String, Object>) USER;
-//
-//
-//                    if(test.get("phone").equals("1234568956"))
-//                    {System.out.println("Author: " +test);
-//                    }
-//
-//                }
-//
-//
-//                System.out.println("Author: " +newPost);
-//                System.out.println("Title: " + newPost.get("FPI"));
-//
-//                // ...
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                // Getting Post failed, log a message
-//                Log.w("Test", "loadPost:onCancelled", databaseError.toException());
-//                // ...
-//            }
-//        };
-//        myRef2.addValueEventListener(postListener);
+
 
         imageView=(ImageView)findViewById(R.id.back);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -212,10 +171,10 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mEmailView.getText().length()==0) {
-                    mEmailView.setError("Email cannot be left blank.");
-                }else if(mPasswordView.getText().length()==0){
-                    mPasswordView.setError("Password cannot be left blank.");
+                if(mEmailView.getText().length()==0 || !isEmailValid(mEmailView.getText().toString())) {
+                    mEmailView.setError("Enter a valid Email id");
+                }else if(mPasswordView.getText().length()==0 || !isPasswordValid(mPasswordView.getText().toString())){
+                    mPasswordView.setError("Password length too short");
                 }else if (phone.getText().length()==0){
                     phone.setError("Phone Number cannot be left blank.");
                 }else if(Licence.getText().length()==0){
@@ -286,18 +245,11 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
 
 
 
-        new LovelyProgressDialog(this)
-                .setIcon(R.drawable.ic_cast_connected_white_36dp)
+        lovelyProgressDialog=new LovelyProgressDialog(this);
+                lovelyProgressDialog.setIcon(R.drawable.ic_cast_connected_white_36dp)
                 .setTitle(R.string.connecting_to_server)
                 .setTopColorRes(R.color.teal)
                 .show();
-//        if (mAuthTask != null) {
-//            return;
-//        }
-//
-//        // Reset errors.
-//        mEmailView.setError(null);
-//        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
@@ -310,38 +262,7 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
         editor2.putString("Password",pass);
         editor2.commit();
 
-        boolean cancel = false;
-        View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-//        if (cancel) {
-//            // There was an error; don't attempt login and focus the first
-//            // form field with an error.
-//            focusView.requestFocus();
-//        } else {
-//            // Show a progress spinner, and kick off a background task to
-//            // perform the user login attempt.
-//            showProgress(true);
-//            mAuthTask = new UserLoginTask(email, password);
-//            mAuthTask.execute((Void) null);
-//        }
         firebaseregistration(email,password);
 
 
@@ -353,21 +274,12 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
 
 
         createaccount(email,password);
-        //FirebaseOptions options = new FirebaseOptions.Builder()
-        //.setApplicationId("1:231136236481:android:3c6c5bfd205b552d") // Required for Analytics.
-        //.setApiKey("AIzaSyC3zUcrhLXbaYbOkk83pTVho5dS1wIzQlo") // Required for Auth.
-        //.setDatabaseUrl("https://krishilabhretailer.firebaseio.com/") // Required for RTDB.
-        //.build();
-        //FirebaseApp.initializeApp(getApplicationContext() /* Context */, options, "secondary");
-        //Retrieve my other app.
-        //FirebaseApp app = FirebaseApp.getInstance("secondary");
         DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference();
         Registration user2=new Registration(company.getText().toString(),latitude,longitude,Licence.getText().toString(),phone.getText().toString(),email,password);
         myRef2.child("FPI").child(company.getText().toString()).setValue(user2);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
         GeoFire geoFire = new GeoFire(ref);
         geoFire.setLocation(company.getText().toString(), new GeoLocation(latitude, longitude));
-        signin(email,password);
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor editor2 = settings.edit();
         editor2.putString("latitude", String.valueOf(latitude));
@@ -563,43 +475,7 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
 
     }
 
-    public void signin(String email, String password)
-    {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("New User", "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w("New User", "signInWithEmail", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.Unable to sign in",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        else
-                        {
-                            Intent in=new Intent(SignUpActivity.this,MainActivity.class);
-                            //in.putExtra("UID",  user.getUid());
-
-
-                            System.out.println(latitude+","+longitude);
-                            in.putExtra("Latitude",String.valueOf(latitude));
-                            in.putExtra("Longitude",String.valueOf(longitude));
-                            startActivity(in);
-                            finish();
-//                            Toast.makeText(LoginActivity.this, "Enter next entry ",
-//                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-
-    }
     public void createaccount(final String email, String password)
     {
 
@@ -623,7 +499,7 @@ public class SignUpActivity extends Activity implements android.app.LoaderManage
                             //Toast.makeText(getApplicationContext(), "registered Successfully ", Toast.LENGTH_SHORT).show();
                             User U=new User(getApplicationContext());
                             U.setName(email);
-
+                            lovelyProgressDialog.dismiss();
                             user = mAuth.getCurrentUser();
 
 

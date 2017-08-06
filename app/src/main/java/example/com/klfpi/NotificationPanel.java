@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.fujiyuu75.sequent.Sequent;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,7 +54,7 @@ public class NotificationPanel extends Activity {
             }
         });
         final SharedPreferences settings= PreferenceManager.getDefaultSharedPreferences(this);
-        Log.e("Name",settings.getString("company",null));
+        //Log.e("Name",settings.getString("company",null));
         DatabaseReference Myref= FirebaseDatabase.getInstance().getReference("Notification").child(settings.getString("company",null));
         ValueEventListener postlistner=new ValueEventListener() {
             @Override

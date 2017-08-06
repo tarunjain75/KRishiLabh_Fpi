@@ -85,6 +85,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     editor2.commit();
                     /*DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
                     myRef.child("Notification").child(settings.getString("company",null)).setValue("true");*/
+                    Log.e("CompanyName",settings.getString("company",null));
                     store_name.setText(settings.getString("company",null));
                     firm=settings.getString("company",null);
                     DatabaseReference ref2=FirebaseDatabase.getInstance().getReference("FPI");

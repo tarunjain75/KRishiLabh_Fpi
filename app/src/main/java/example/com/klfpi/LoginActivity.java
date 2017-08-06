@@ -43,21 +43,12 @@ public class LoginActivity extends Activity {
     String emailid,pass,email;
     TextView textView;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    LovelyProgressDialog lovelyProgressDialog;
 
 
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -124,10 +115,10 @@ public class LoginActivity extends Activity {
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mEmailView.getText().length()==0){
-                    mEmailView.setError("Field cannot be left blank.");
-                }else if(mPasswordView.getText().length()==0){
-                    mPasswordView.setError("Field cannot be left blank.");
+                if(mEmailView.getText().length()==0 || !isEmailValid(mEmailView.getText().toString())){
+                    mEmailView.setError("Enter a valid Email id");
+                }else if(mPasswordView.getText().length()==0 || !isPasswordValid(mPasswordView.getText().toString())){
+                    mPasswordView.setError("password length too short");
                 }else{
                     attemptLogin();}
 
@@ -137,8 +128,8 @@ public class LoginActivity extends Activity {
     private void attemptLogin() {
 
 
-        new LovelyProgressDialog(this)
-                .setIcon(R.drawable.ic_cast_connected_white_36dp)
+        lovelyProgressDialog=new LovelyProgressDialog(this);
+                lovelyProgressDialog.setIcon(R.drawable.ic_cast_connected_white_36dp)
                 .setTitle(R.string.connecting_to_server)
                 .setTopColorRes(R.color.teal)
                 .show();
@@ -159,58 +150,13 @@ public class LoginActivity extends Activity {
         final SharedPreferences.Editor editor2 = settings.edit();
         editor2.putString("Email",emailid);
         editor2.putString("Password",pass);
-       /* DatabaseReference myRef2= FirebaseDatabase.getInstance().getReference();
-        myRef2.child("FPI").orderByChild("username").equalTo(emailid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                String company=childSnapshot.getKey();
-                System.out.println("check"+" "+company);
-                    if(settings.getString("company",null)!=null){
-                        editor2.remove("company").apply();
-                        editor2.putString("company",company).apply();
-                    }
-                    else{
-                        editor2.putString("company",company).apply();
-                    }
 
-
-                    System.out.println("check 1"+" "+settings.getString("company",null));
-            }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w("Test", "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        });*/
 
 
         editor2.commit();
 
 //
-        boolean cancel = false;
-        View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
 
 
         signin(email,password);
@@ -233,82 +179,8 @@ public class LoginActivity extends Activity {
 
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
 
 
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-
-        }
-        public void onPlaceSelected(Place place) {
-            Log.i("", "Place Selected: " + place.getName());
-
-            // Format the returned place's details and display them in the TextView.
-            //location.setText((place.getAddress()).toString());// TODO: 28/3/17 get the location from here...
-
-            CharSequence attributions = place.getAttributions();
-       /* if (!TextUtils.isEmpty(attributions)) {
-            mPlaceAttribution.setText(" ");
-        } else {
-            mPlaceAttribution.setText("");
-        }
-        */
-        }
-
-
-
-
-    }
 
     public void signin(final String email, String password)
     {
@@ -338,6 +210,7 @@ public class LoginActivity extends Activity {
                             Intent in=new Intent(LoginActivity.this,MainActivity.class);
                             //in.putExtra("UID",  user.getUid());
                             startActivity(in);
+                            lovelyProgressDialog.dismiss();
                             finish();
 
                         }
@@ -347,30 +220,7 @@ public class LoginActivity extends Activity {
                 });
 
     }
-    /*public void createaccount(String email, String password)
-    {
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("New User", "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Authentication failed.Unable to create account",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        { user = mAuth.getCurrentUser();}
-
-                        // ...
-                    }
-                });
-
-    }*/
     @Override
     public void onStart() {
         super.onStart();
